@@ -14,4 +14,8 @@
 
 (수정중)
 
+## 🍋 API Test
+
+⛱️Link: https://shocking-flavor-85b.notion.site/API-b13028621ca94525bb1e79e1b5730335?pvs=4
+
 🍊🍋🍎🥭🍍🍑🍏🍒🍌
