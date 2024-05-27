@@ -1,0 +1,28 @@
+{
+  "name": "1ggun-shop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/CDR4733/1ggun-shop.git",
+  "author": "CDR4733 <shsing2@naver.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "format": "prettier --write *.js **/*.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "joi": "^17.13.1",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.14.0",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.1",
+    "prettier": "^3.2.5"
+  }
+}

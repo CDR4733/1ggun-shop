@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  userId   Int    @id @default(autoincrement()) @map("user_id")
+  email    String @unique @map("email")
+  password String @map("password")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  UserInfos  UserInfos?
+  Resumes    Resumes[]
+  StatusLogs StatusLogs[]
+
+  @@map("users")
+}
+
+model UserInfos {
+  userInfoId Int    @id @default(autoincrement()) @map("user_info_id")
+  UserId     Int    @unique @map("user_id")
+  email      String @unique @map("email")
+  name       String @map("name")
+  role       String @map("role")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+
+  @@map("user_infos")
+}
+
+model Resumes {
+  resumeId      Int    @id @default(autoincrement()) @map("resume_id")
+  UserId        Int    @map("user_id")
+  resumeTitle   String @map("resume_title")
+  resumeContent String @map("resume_content") @db.Text
+  status        String @default("APPLY") @map("status")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  User       Users        @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  StatusLogs StatusLogs[]
+
+  @@map("resumes")
+}
+
+model StatusLogs {
+  logId          Int    @id @default(autoincrement()) @map("log_id")
+  ResumeId       Int    @map("resume_id")
+  recruiterId    Int    @map("recruiter_id")
+  previousStatus String @map("previous_status")
+  newStatus      String @map("new_status")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  Resume Resumes @relation(fields: [ResumeId], references: [resumeId], onDelete: Cascade)
+  User   Users   @relation(fields: [recruiterId], references: [userId], onDelete: Cascade)
+
+  @@map("status_logs")
+}
