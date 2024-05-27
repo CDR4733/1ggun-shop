@@ -33,7 +33,7 @@ model UserInfos {
   UserId     Int    @unique @map("user_id")
   email      String @unique @map("email")
   name       String @map("name")
-  role       String @map("role")
+  role       String @default("APPLICANT") @map("role")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
