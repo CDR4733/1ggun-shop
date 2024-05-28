@@ -158,4 +158,29 @@ router.post("/log-in", async (req, res, next) => {
   });
 });
 
+/** 내 정보 조회 API **/
+router.get("/users", authorizationMiddleware, async (req, res, next) => {
+  // 1. 사용자 정보는 인증 Middleware(req.user)를 통해서 전달
+  const { userId } = req.user;
+  // 2. Users <-> UserInfos 테이블(1:1관계)에서 데이터 조회 후 할당
+  // 내용 - userId, email, name, role, createdAt, updatedAt
+  const userInfo = await prisma.userInfos.findFirst({
+    where: { UserId: +userId },
+    select: {
+      UserId: true,
+      email: true,
+      name: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  // 3. 내 정보 조회 결과를 클라이언트에 반환 200
+  return res.status(200).json({
+    status: 200,
+    message: "내 정보 조회에 성공했습니다.",
+    data: userInfo,
+  });
+});
+
 export default router;
