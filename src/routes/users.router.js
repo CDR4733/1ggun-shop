@@ -3,6 +3,7 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma.util.js";
+import authorizationMiddleware from "../middlewares/authorization.middleware.js";
 
 const router = express.Router();
 
