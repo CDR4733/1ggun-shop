@@ -3,6 +3,7 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma.util.js";
+import errorHandlerMiddleware from "../middlewares/error-handler.middleware.js";
 import authorizationMiddleware from "../middlewares/authorization.middleware.js";
 
 const router = express.Router();
@@ -175,6 +176,13 @@ router.get("/users", authorizationMiddleware, async (req, res, next) => {
       updatedAt: true,
     },
   });
+  // 2-1. 데이터가 존재하지 않는 경우
+  if (!userInfo) {
+    return res.status(404).json({
+      status: 404,
+      message: "회원님의 정보가 존재하지 않습니다. 관리자에게 문의하세요.",
+    });
+  }
   // 3. 내 정보 조회 결과를 클라이언트에 반환 200
   return res.status(200).json({
     status: 200,
