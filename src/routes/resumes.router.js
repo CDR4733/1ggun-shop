@@ -166,4 +166,46 @@ router.get(
   },
 );
 
+/** 이력서 삭제 API **/
+router.delete(
+  "/resumes/:resumeId",
+  authorizationMiddleware,
+  async (req, res, next) => {
+    // 1. 사용자 정보는 인증 Middleware(req.user)를 통해서 전달 받음
+    const { userId } = req.user;
+    // 2. 이력서 ID를 Path Parameters(req.params)로 전달 받음
+    const { resumeId } = req.params;
+    // 3. 삭제하기로 선택한 이력서와 관련하여
+    // 로그인한 userId와 이력서를 쓴 사람의 UserId가 일치하는지 확인
+    const resume = await prisma.resumes.findFirst({
+      where: {
+        UserId: +userId,
+        resumeId: +resumeId,
+      },
+    });
+    // 4. 이력서 정보가 없는 경우 - "내가 쓴 이력서가 아니거나, 이력서가 존재하지 않습니다."
+    if (!resume) {
+      return res.status(404).json({
+        status: 404,
+        message: "내가 쓴 이력서가 아니거나, 이력서가 존재하지 않습니다.",
+      });
+    }
+    // 5. DB에서 이력서 정보를 삭제함
+    await prisma.resumes.delete({
+      where: {
+        UserId: +userId,
+        resumeId: +resumeId,
+      },
+    });
+    // 6. 삭제된 이력서 ID를 반환함
+    return res.status(200).json({
+      status: 200,
+      message: "이력서 삭제가 완료되었습니다.",
+      data: {
+        resumeId,
+      },
+    });
+  },
+);
+
 export default router;
