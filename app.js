@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { prisma } from "./src/utils/prisma.util.js";
 
 import UsersRouter from "./src/routes/users.router.js";
+import ResumesRouter from "./src/routes/resumes.router.js";
 import errorHandlerMiddleware from "./src/middlewares/error-handler.middleware.js";
 
 const app = express();
@@ -14,7 +15,7 @@ const PORT = 3018;
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api", [UsersRouter]);
+app.use("/api", [UsersRouter, ResumesRouter]);
 app.use(errorHandlerMiddleware); // errorHandlerMiddleware는 마지막에 위치할 것!
 
 prisma.$connect();
