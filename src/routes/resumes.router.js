@@ -166,6 +166,69 @@ router.get(
   },
 );
 
+/** 이력서 수정 API **/
+router.patch(
+  "/resumes/:resumeId",
+  authorizationMiddleware,
+  async (req, res, next) => {
+    // 1. 사용자 정보는 인증 Middleware(req.user)를 통해서 전달 받음
+    const { userId } = req.user;
+    // 2. 이력서 ID를 Path Parameters(req.params)로 전달 받음
+    const { resumeId } = req.params;
+    // 3. 수정할 내용을 req.body에 받음
+    const { resumeTitle, resumeContent } = req.body;
+    // 4. 수정할 내용을 빼먹지 않았는지 확인
+    if (!resumeTitle && !resumeContent) {
+      return res.status(400).json({
+        status: 400,
+        message: "수정할 정보를 입력해주세요.",
+      });
+    }
+    // 5. 수정하기로 선택한 이력서와 관련하여
+    // 로그인한 userId와 이력서를 쓴 사람의 UserId가 일치하는지 확인
+    const resume = await prisma.resumes.findFirst({
+      where: {
+        UserId: +userId,
+        resumeId: +resumeId,
+      },
+    });
+    // 6. 이력서가 존재하는지 확인
+    if (!resume) {
+      return res.status(404).json({
+        status: 404,
+        message: "내가 쓴 이력서가 아니거나, 이력서가 존재하지 않습니다.",
+      });
+    }
+    // 7. 이력서 수정하기
+    await prisma.resumes.update({
+      data: {
+        resumeTitle,
+        resumeContent,
+        updatedAt: new Date(),
+      },
+      where: {
+        UserId: +userId,
+        resumeId: +resumeId,
+      },
+    });
+    // 8. 이력서 수정 결과를 클라이언트에게 반환
+    // resumeId, userId, resumeTitle, resumeContent, status, createdAt, updatedAt
+    return res.status(200).json({
+      status: 200,
+      message: "이력서 수정이 완료되었습니다.",
+      data: {
+        resumeId,
+        userId,
+        resumeTitle: resumeTitle ? resumeTitle : resume.resumeTitle,
+        resumeContent: resumeContent ? resumeContent : resume.resumeContent,
+        status: resume.status,
+        createdAt: resume.createdAt,
+        updatedAt: new Date(),
+      },
+    });
+  },
+);
+
 /** 이력서 삭제 API **/
 router.delete(
   "/resumes/:resumeId",
@@ -197,7 +260,7 @@ router.delete(
         resumeId: +resumeId,
       },
     });
-    // 6. 삭제된 이력서 ID를 반환함
+    // 6. 삭제된 이력서 ID를 클라이언트에게 반환함
     return res.status(200).json({
       status: 200,
       message: "이력서 삭제가 완료되었습니다.",
