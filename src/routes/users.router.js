@@ -2,9 +2,12 @@ import express from "express";
 import Joi from "joi";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotEnv from "dotenv";
 import { prisma } from "../utils/prisma.util.js";
 import errorHandlerMiddleware from "../middlewares/error-handler.middleware.js";
 import authorizationMiddleware from "../middlewares/authorization.middleware.js";
+
+dotEnv.config();
 
 const router = express.Router();
 
@@ -147,7 +150,7 @@ router.post("/log-in", async (req, res, next) => {
     {
       userId: user.userId, //Payload에 사용자 ID 포함시킴
     },
-    "customized_secret_key", // 비밀키: dotenv를 이용해서 외부에서 볼 수 없도록 리팩토링 할 것!!
+    process.env.SECRET_KEY,
     { expiresIn: "12h" }, // 유효기간 12시간 생성
   );
   res.cookie("authorization", `Bearer ${token}`);

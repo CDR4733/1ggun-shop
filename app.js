@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import dotEnv from "dotenv";
 // import LogMiddleware from './src/middlewares/log.middleware.js'; // LogMiddlewaqre 완성되면 주석 풀기!!
 import { prisma } from "./src/utils/prisma.util.js";
 
@@ -7,8 +8,10 @@ import UsersRouter from "./src/routes/users.router.js";
 import ResumesRouter from "./src/routes/resumes.router.js";
 import errorHandlerMiddleware from "./src/middlewares/error-handler.middleware.js";
 
+dotEnv.config();
+
 const app = express();
-const PORT = 3018;
+const PORT = process.env.PORT_NUM;
 
 // app.use(LogMiddleware); // LogMiddlewaqre 완성되면 주석 풀기!! 맨 위에 위치할 것!
 
