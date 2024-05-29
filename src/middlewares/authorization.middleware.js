@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
+import dotEnv from "dotenv";
 import { prisma } from "../utils/prisma.util.js";
+
+dotEnv.config();
 
 export default async function (req, res, next) {
   try {
@@ -24,7 +27,7 @@ export default async function (req, res, next) {
     }
     // 4. 서버에서 발급한 JWT가 맞는지 검증
     // 아닌 경우 - 에러 - "인증 정보가 유효하지 않습니다."
-    const decodedToken = jwt.verify(token, "customized_secret_key"); // .env 리팩토링하기!!
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
     const userId = decodedToken.userId;
     // 5. Payload에 담긴 사용자 ID와 일치하는 사용자 조회
     // 없는 경우 - "인증 정보와 일치하는 사용자가 없습니다."
